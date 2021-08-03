@@ -7,13 +7,22 @@ class Student:
         self.courses_in_progress = []
         self.grades = {}
 
-    def __str__(self):
-        ocenka = ''
-        for name, ocenka_item in self.grades.items():
-            ocenka += ' '+name+': '
-            ocenka += str(+sum(ocenka_item) / len(ocenka_item))
+    def grade_item_student(self):
+        ocenka = map(sum, list(self.grades.values()))
+        ocenka = list(ocenka)
+        count_ocenka = map(len, list(self.grades.values()))
+        count_ocenka = list(count_ocenka)
+        result_ocenka = sum(ocenka) / sum(count_ocenka)
+        return result_ocenka
 
-        return 'Имя: ' + self.name + '\nФамилия: ' + self.surname + '\nСредняя оценка за домашние задания: ' + str(ocenka) + '\nКурсы в процессе изучения: '+str(", ".join(self.courses_in_progress))+'\nЗавершенные курсы: '+str(", ".join(self.finished_courses))
+    def __str__(self):
+        return 'Имя: ' + self.name + '\nФамилия: ' + self.surname + '\nСредняя оценка за домашние задания: ' + str(self.grade_item_student()) + '\nКурсы в процессе изучения: '+str(", ".join(self.courses_in_progress))+'\nЗавершенные курсы: '+str(", ".join(self.finished_courses))
+
+    def __lt__(self, other):
+        if not isinstance(other, Student):
+            print('Not a Student!')
+            return
+        return self.grade_item_student() < other.grade_item_student()
 
     def rate_hw_lecturer(self, course, lecturer, grade):
         if isinstance(lecturer, Lecturer) and course in lecturer.courses_attached:
@@ -35,12 +44,22 @@ class Lecturer(Mentor):
         super().__init__(name, power)
         self.grades_for_lectures = {}
 
+    def grade_item_lecturer(self):
+        ocenka = map(sum, list(self.grades_for_lectures.values()))
+        ocenka = list(ocenka)
+        count_ocenka = map(len, list(self.grades_for_lectures.values()))
+        count_ocenka = list(count_ocenka)
+        result_ocenka = sum(ocenka) / sum(count_ocenka)
+        return result_ocenka
+
+    def __lt__(self, other):
+        if not isinstance(other, Lecturer):
+            print('Not a Lecturer!')
+            return
+        return self.grade_item_lecturer() < other.grade_item_lecturer()
+
     def __str__(self):
-        ocenka = ''
-        for name, ocenka_item in self.grades_for_lectures.items():
-            ocenka += ' ' + name + ': '
-            ocenka += str(+sum(ocenka_item) / len(ocenka_item))
-        return 'Имя: ' + self.name + '\nФамилия: ' + self.surname + '\nСредняя оценка за лекции: ' + str(ocenka)
+        return 'Имя: ' + self.name + '\nФамилия: ' + self.surname + '\nСредняя оценка за лекции: ' + str(self.grade_item_lecturer())
 
 class Reviewer(Mentor):
     def rate_hw(self, student, course, grade):
@@ -55,54 +74,76 @@ class Reviewer(Mentor):
     def __str__(self):
         return 'Имя: ' + self.name + '\nФамилия: ' + self.surname
 
-best_student = Student('Ruoy', 'Eman', 'your_gender')
-best_student.courses_in_progress += ['Python']
-best_student.courses_in_progress += ['C++']
 
-cool_mentor = Mentor('Some', 'Buddy')
-cool_mentor.courses_attached += ['Python']
+student1 = Student('Ruoy', 'Eman', 'your_gender')
+student1.courses_in_progress += ['Python']
+student1.courses_in_progress += ['C++']
+
+student2 = Student('Ruoy2', 'Eman2', 'your_gender2')
+student2.courses_in_progress += ['Python']
+student2.courses_in_progress += ['C++']
+
+mentor = Mentor('Some', 'Buddy')
+mentor.courses_attached += ['Python']
 
 
 # Reviewer ставит оценки студентам
 
-cool_reviewer = Reviewer('Ivan', 'Popov')
-cool_reviewer.courses_attached += ['Python']
-cool_reviewer.courses_attached += ['C++']
+reviewer = Reviewer('Ivan', 'Popov')
+reviewer.courses_attached += ['Python']
+reviewer.courses_attached += ['C++']
 
-cool_reviewer.rate_hw(best_student, 'Python', 8)
-cool_reviewer.rate_hw(best_student, 'Python', 7)
-cool_reviewer.rate_hw(best_student, 'Python', 9)
+reviewer.rate_hw(student1, 'Python', 8)
+reviewer.rate_hw(student1, 'Python', 8)
+reviewer.rate_hw(student1, 'Python', 8)
 
-cool_reviewer.rate_hw(best_student, 'C++', 7)
-cool_reviewer.rate_hw(best_student, 'C++', 6)
-cool_reviewer.rate_hw(best_student, 'C++', 5)
+reviewer.rate_hw(student1, 'C++', 6)
+reviewer.rate_hw(student1, 'C++', 6)
+reviewer.rate_hw(student1, 'C++', 6)
+
+reviewer.rate_hw(student2, 'C++', 6)
+reviewer.rate_hw(student2, 'C++', 6)
+reviewer.rate_hw(student2, 'C++', 6)
 
 
-print(best_student.grades)
+#print(student1.grades)
 print('###')
 
 # Lecturer получают оценки от студентов
 
-cool_lecturer = Lecturer('Elena', 'Nikolaeva')
-cool_lecturer.courses_attached += ['Python']
-cool_lecturer.courses_attached += ['C++']
+lecturer1 = Lecturer('Elena', 'Nikolaeva')
+lecturer1.courses_attached += ['Python']
+lecturer1.courses_attached += ['C++']
 
-best_student.rate_hw_lecturer('Python', cool_lecturer, 8)
-best_student.rate_hw_lecturer('Python', cool_lecturer, 8)
+student1.rate_hw_lecturer('Python', lecturer1, 8)
+student1.rate_hw_lecturer('Python', lecturer1, 8)
 
-best_student.rate_hw_lecturer('C++', cool_lecturer, 7)
-best_student.rate_hw_lecturer('C++', cool_lecturer, 6)
+student1.rate_hw_lecturer('C++', lecturer1, 7)
+student1.rate_hw_lecturer('C++', lecturer1, 6)
+
+lecturer2 = Lecturer('Viktor', 'Evdeev')
+lecturer2.courses_attached += ['Python']
+lecturer2.courses_attached += ['C++']
+
+student1.rate_hw_lecturer('C++', lecturer2, 10)
+student1.rate_hw_lecturer('C++', lecturer2, 10)
 
 
-print(cool_lecturer.grades_for_lectures)
+
+
+#print(lecturer.grades_for_lectures)
 
 print()
 
 # Проверяем перезагрузку __str__
-print('Проверяем перезагрузку __str__:')
-print(cool_reviewer)
-print()
-print(cool_lecturer)
-print()
-print(best_student)
+# print('Проверяем перезагрузку __str__:')
+# print(reviewer)
+# print()
+# print(lecturer)
+# print()
+# print(student1)
+# print(best_student < best_student2)
+print(lecturer1.grade_item_lecturer())
+print(lecturer2.grade_item_lecturer())
 
+print(lecturer1)
