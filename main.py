@@ -75,9 +75,42 @@ class Reviewer(Mentor):
         return 'Имя: ' + self.name + '\nФамилия: ' + self.surname
 
 
+
+
+def sum_grade_student (student_list, name_kurs):
+    # Cредняя оценка за домашние задания по всем студентам
+    result_list = []
+    for student_item in student_list:
+        if name_kurs in student_item.grades:
+            result_list.append(sum(student_item.grades[name_kurs])/len(student_item.grades[name_kurs]))
+
+    if result_list:
+        result = sum(result_list)/len(student_list)
+    else:
+        result = 'Указанного курса нет в программе'
+
+    return result
+
+def sum_grade_lecturer (lecturer_list, name_kurs):
+    # Средняя оценка за лекции всех лекторов
+    result_list = []
+    for lecturer_item in lecturer_list:
+        if name_kurs in lecturer_item.grades_for_lectures:
+            result_list.append(sum(lecturer_item.grades_for_lectures[name_kurs])/len(lecturer_item.grades_for_lectures[name_kurs]))
+
+    if result_list:
+        result = sum(result_list)/len(student_list)
+    else:
+        result = 'Указанного курса нет в программе'
+
+    return result
+
+
+
 student1 = Student('Ruoy', 'Eman', 'your_gender')
 student1.courses_in_progress += ['Python']
 student1.courses_in_progress += ['C++']
+student1.finished_courses += ['HTML']
 
 student2 = Student('Ruoy2', 'Eman2', 'your_gender2')
 student2.courses_in_progress += ['Python']
@@ -97,19 +130,14 @@ reviewer.rate_hw(student1, 'Python', 8)
 reviewer.rate_hw(student1, 'Python', 8)
 reviewer.rate_hw(student1, 'Python', 8)
 
-reviewer.rate_hw(student1, 'C++', 6)
-reviewer.rate_hw(student1, 'C++', 6)
-reviewer.rate_hw(student1, 'C++', 6)
+reviewer.rate_hw(student1, 'C++', 10)
+reviewer.rate_hw(student1, 'C++', 10)
+reviewer.rate_hw(student1, 'C++', 10)
 
 reviewer.rate_hw(student2, 'C++', 6)
 reviewer.rate_hw(student2, 'C++', 6)
 reviewer.rate_hw(student2, 'C++', 6)
 
-
-#print(student1.grades)
-print('###')
-
-# Lecturer получают оценки от студентов
 
 lecturer1 = Lecturer('Elena', 'Nikolaeva')
 lecturer1.courses_attached += ['Python']
@@ -118,8 +146,8 @@ lecturer1.courses_attached += ['C++']
 student1.rate_hw_lecturer('Python', lecturer1, 8)
 student1.rate_hw_lecturer('Python', lecturer1, 8)
 
-student1.rate_hw_lecturer('C++', lecturer1, 7)
-student1.rate_hw_lecturer('C++', lecturer1, 6)
+student1.rate_hw_lecturer('C++', lecturer1, 8)
+student1.rate_hw_lecturer('C++', lecturer1, 8)
 
 lecturer2 = Lecturer('Viktor', 'Evdeev')
 lecturer2.courses_attached += ['Python']
@@ -128,22 +156,31 @@ lecturer2.courses_attached += ['C++']
 student1.rate_hw_lecturer('C++', lecturer2, 10)
 student1.rate_hw_lecturer('C++', lecturer2, 10)
 
+# №3
 
-
-
-#print(lecturer.grades_for_lectures)
-
+print(student1)
 print()
+print(student2)
+print()
+print(student1 > student2)
 
-# Проверяем перезагрузку __str__
-# print('Проверяем перезагрузку __str__:')
-# print(reviewer)
-# print()
-# print(lecturer)
-# print()
-# print(student1)
-# print(best_student < best_student2)
-print(lecturer1.grade_item_lecturer())
-print(lecturer2.grade_item_lecturer())
+print('\n')
 
 print(lecturer1)
+print()
+print(lecturer2)
+print()
+print(lecturer1 > lecturer2)
+
+
+
+
+# №4
+print('\n')
+
+student_list = [student1, student2]
+print(f"Cредняя оценка за домашние задания по всем студентам: {sum_grade_student(student_list, 'C++')}")
+
+
+lecturer_list = [lecturer1, lecturer2]
+print(f"Средняя оценка за лекции всех лекторов: {sum_grade_lecturer(lecturer_list, 'C++')}")
